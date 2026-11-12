@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - Novi Community</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body {
+            background-color: #0b0b0b;
+            color: #e0e0e0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('banner.jpg') no-repeat center center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 1;
+        }
+        .login-card {
+            position: relative;
+            z-index: 2;
+            background: rgba(18, 18, 18, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+        .server-logo {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            border: 3px solid #5865F2;
+            object-fit: cover;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.4);
+        }
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 0.95rem;
+            color: #999;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .discord-login-btn {
+            background: #5865F2;
+            color: #fff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+        }
+        .discord-login-btn:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <img src="logo.jpg" alt="Novi Logo" class="server-logo">
+        <h1>مرحباً بك في Novi</h1>
+        <p>يرجى تسجيل الدخول باستخدام حساب ديسكورد الخاص بك للوصول إلى منصة المجتمع ومتابعة الطلبات.</p>
+        
+        <a href="http://localhost:3000/api/auth/discord" class="discord-login-btn">
+            <i class="fa-brands fa-discord" style="font-size: 1.3rem;"></i> تسجيل الدخول بواسطة Discord
+        </a>
+    </div>
+
+    <script>
+        const user = localStorage.getItem('discord_user');
+        if (user) {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

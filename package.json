@@ -1,0 +1,17 @@
+{
+  "name": "novi-project",
+  "version": "1.0.0",
+  "description": "Novi Community Bot & Website",
+  "main": "bot.js",
+  "scripts": {
+    "start": "concurrently \"node bot.js\""
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "discord.js": "^14.x.x",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

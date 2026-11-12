@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novi Community</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0b0b; --text-color: #e0e0e0;
+            --card-bg: rgba(18, 18, 18, 0.85); --card-border: rgba(255, 255, 255, 0.08);
+            --card-hover-border: rgba(255, 255, 255, 0.3); --about-bg: rgba(20, 20, 20, 0.75);
+            --overlay-bg: rgba(10, 10, 10, 0.88); --footer-color: #888;
+        }
+        html.light {
+            --bg-color: #f4f5f7; --text-color: #2b2b2b;
+            --card-bg: rgba(255, 255, 255, 0.9); --card-border: rgba(0, 0, 0, 0.08);
+            --card-hover-border: rgba(88, 101, 242, 0.4); --about-bg: rgba(255, 255, 255, 0.85);
+            --overlay-bg: rgba(244, 245, 247, 0.85); --footer-color: #666;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+
+        .theme-toggle, .user-profile-btn {
+            position: fixed; top: 20px; z-index: 1000;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            color: var(--text-color); height: 45px; border-radius: 50px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); backdrop-filter: blur(10px); padding: 0 15px; font-size: 0.95rem; gap: 8px;
+        }
+        .theme-toggle { left: 20px; width: 45px; border-radius: 50%; }
+        .user-profile-btn { right: 20px; }
+        .user-profile-btn img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
+
+        .hero-banner {
+            position: relative; width: 100%; min-height: 100vh;
+            background: url('banner.jpg') no-repeat center center/cover fixed;
+            display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 50px 20px 30px 20px;
+        }
+        .hero-banner::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); z-index: 1; }
+        .content-wrapper { position: relative; z-index: 2; width: 100%; max-width: 1100px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+
+        .server-logo { width: 130px; height: 130px; border-radius: 50%; border: 4px solid rgba(255, 255, 255, 0.15); object-fit: cover; margin-bottom: 20px; animation: float 4s ease-in-out infinite; background: #111; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+        h1 { font-size: 2.8rem; font-weight: 900; color: var(--text-color); margin-bottom: 15px; }
+        .about-section { background: var(--about-bg); backdrop-filter: blur(12px); border: 1px solid var(--card-border); padding: 22px 30px; border-radius: 16px; max-width: 750px; margin: 15px 0 35px 0; }
+        .about-section p { font-size: 1.1rem; line-height: 1.8; color: var(--text-color); opacity: 0.9; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 900px; margin-bottom: 35px; }
+        .spotlight-card {
+            position: relative; background: var(--card-bg); backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        .spotlight-card:hover { transform: translateY(-5px); border-color: var(--card-hover-border); box-shadow: 0 12px 30px rgba(88, 101, 242, 0.15); }
+        .spotlight-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(88, 101, 242, 0.12), transparent 40%);
+            opacity: 0; transition: opacity 0.5s ease; pointer-events: none; z-index: 1;
+        }
+        .spotlight-card:hover::before { opacity: 1; }
+
+        .stat-card, .staff-card { padding: 25px 20px; text-align: center; z-index: 2; position: relative; }
+        .stat-card i { font-size: 2.2rem; margin-bottom: 12px; }
+        .stat-card .number { font-size: 2rem; font-weight: 700; color: var(--text-color); margin-bottom: 5px; }
+        .stat-card .label { font-size: 0.95rem; color: var(--footer-color); }
+        .online-dot { color: #2ecc71 !important; } .offline-dot { color: #95a5a6 !important; } .bots-dot { color: #3498db !important; } .members-dot { color: #f1c40f !important; }
+
+        .action-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-bottom: 45px; }
+        .join-btn, .copy-btn { background: linear-gradient(135deg, #2b2b2b, #111111); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 14px 32px; font-size: 1.05rem; font-weight: 700; border-radius: 50px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; }
+        .staff-section { width: 100%; max-width: 900px; margin-bottom: 45px; text-align: center; }
+        .staff-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; justify-content: center; }
+
+        .badges-container { position: absolute; top: 15px; right: 15px; display: flex; flex-direction: column; gap: 5px; align-items: flex-end; z-index: 3; }
+        .top-badge { background: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.4); padding: 3px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; }
+        .staff-avatar { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #5865F2; object-fit: cover; margin-bottom: 15px; }
+        .staff-name { font-size: 1.15rem; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
+        .staff-username { font-size: 0.85rem; color: var(--footer-color); margin-bottom: 10px; }
+        .staff-role { display: inline-block; background: rgba(88, 101, 242, 0.15); color: #7289da; border: 1px solid rgba(88, 101, 242, 0.3); padding: 4px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; width: 90%; max-width: 480px; padding: 30px; text-align: right; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .modal-title { font-size: 1.5rem; font-weight: 900; color: var(--text-color); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 700; color: var(--text-color); margin-bottom: 6px; }
+        .form-group input, .form-group textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px 15px; color: var(--text-color); font-size: 0.95rem; outline: none; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        .submit-apply-btn { background: #5865F2; color: #fff; border: none; padding: 10px 25px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        .close-modal-btn { background: transparent; color: var(--footer-color); border: 1px solid var(--card-border); padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+
+        .rules-section { width: 100%; max-width: 900px; margin-bottom: 45px; text-align: right; }
+        .section-title { text-align: center; font-size: 2rem; font-weight: 900; color: var(--text-color); margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .rules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 15px; }
+        .rule-card { padding: 18px 22px; display: flex; align-items: flex-start; gap: 16px; z-index: 2; position: relative; }
+        .rule-number { min-width: 38px; height: 38px; background: #2a2a2a; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; }
+        .rule-content h3 { font-size: 1.05rem; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
+        .rule-content p { font-size: 0.9rem; color: var(--footer-color); }
+
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #191919; color: #fff; border: 1px solid rgba(46,204,113,0.5); padding: 12px 28px; border-radius: 50px; font-weight: 600; z-index: 2100; opacity: 0; transition: all 0.4s ease; display: flex; align-items: center; gap: 10px; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        footer { position: relative; z-index: 2; text-align: center; font-size: 0.9rem; color: var(--footer-color); margin-top: 20px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+        .developer-tag { color: var(--text-color); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
+    
+    <div id="auth-container"></div>
+
+    <div class="hero-banner">
+        <div></div>
+        <div class="content-wrapper">
+            <img src="logo.jpg" alt="Novi Logo" class="server-logo">
+            <h1>Novi Community</h1>
+
+            <div class="about-section">
+                <p>أهلاً بك في منصة <strong>Novi</strong> الرسمية. مجتمع هادف ومتكامل، نسعى من خلاله لتوفير بيئة تجمع الأعضاء تحت إطار تنظيمي راقي ومميز.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="spotlight-card"><div class="stat-card"><i class="fa-solid fa-users members-dot"></i><div class="number" id="total-members">...</div><div class="label">إجمالي الأعضاء</div></div></div>
+                <div class="spotlight-card"><div class="stat-card"><i class="fa-solid fa-circle-dot online-dot"></i><div class="number" id="online-members">...</div><div class="label">الأعضاء المتصلون</div></div></div>
+                <div class="spotlight-card"><div class="stat-card"><i class="fa-solid fa-moon offline-dot"></i><div class="number" id="offline-members">...</div><div class="label">الأعضاء غير المتصلين</div></div></div>
+                <div class="spotlight-card"><div class="stat-card"><i class="fa-solid fa-robot bots-dot"></i><div class="number" id="bots-count">...</div><div class="label">عدد البوتات</div></div></div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="https://discord.gg/nvi" target="_blank" class="join-btn"><i class="fa-brands fa-discord"></i> انضم إلى السيرفر الآن</a>
+                <button onclick="copyInvite()" class="copy-btn"><i class="fa-regular fa-copy"></i> نسخ رابط الدعوة</button>
+            </div>
+
+            <div class="staff-section">
+                <h2 class="section-title"><i class="fa-solid fa-crown"></i> الإدارة والمطورين</h2>
+                <div class="staff-grid" id="staff-container">
+                    <div class="spotlight-card" style="grid-column: 1 / -1;"><div class="staff-card"><div class="staff-name">جاري تحميل طاقم الإدارة...</div></div></div>
+                </div>
+            </div>
+
+            <div class="rules-section">
+                <h2 class="section-title"><i class="fa-solid fa-gavel"></i> القوانين والأنظمة</h2>
+                <div class="rules-grid">
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">1</div><div class="rule-content"><h3>الاحترام أولاً</h3><p>احترم الجميع، وممنوع السب أو الإهانة أو الاستفزاز أو التقليل من أي عضو.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">2</div><div class="rule-content"><h3>ممنوع المشاكل والهوشات</h3><p>أي خلاف شخصي خلوه برا السيرفر، ولا تحولون الشات لساحة مشاكل.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">3</div><div class="rule-content"><h3>ممنوع السبام</h3><p>لا تكرر الرسائل، المنشنات، الإيموجيات أو أي شيء يزعج الشات.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">4</div><div class="rule-content"><h3>ممنوع الإعلانات</h3><p>ممنوع نشر إعلانات أو روابط لسيرفرات وحسابات ومشاريع بدون إذن الإدارة.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">5</div><div class="rule-content"><h3>ممنوع المحتوى المخالف</h3><p>أي محتوى غير لائق أو مسيء أو مخالف لقوانين ديسكورد ممنوع بشكل كامل.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">6</div><div class="rule-content"><h3>احترم الخصوصية</h3><p>ممنوع نشر صور أو معلومات أو محادثات خاصة لأي شخص بدون موافقته.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">7</div><div class="rule-content"><h3>لا تستغل الثغرات</h3><p>إذا اكتشفت مشكلة أو ثغرة في السيرفر، بلغ الإدارة بدل ما تستغلها.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">8</div><div class="rule-content"><h3>احترم الإدارة</h3><p>قرارات الإدارة تُحترم، وإذا عندك اعتراض أو شكوى ناقشها بهدوء مع المسؤولين.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">9</div><div class="rule-content"><h3>استخدم الرومات بشكل صحيح</h3><p>كل روم له استخدامه، فحاول تلتزم بموضوع الروم عشان يبقى السيرفر مرتب.</p></div></div></div>
+                    <div class="spotlight-card"><div class="rule-card"><div class="rule-number">10</div><div class="rule-content"><h3>العقوبات حسب المخالفة</h3><p>تُطبّق العقوبات الإدارية المناسبة بناءً على نوع وحجم المخالفة المرتكبة.</p></div></div></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div>Developed by <a href="https://discord.com/users/._3sr" target="_blank" class="developer-tag"><i class="fa-brands fa-discord"></i> Anonymous</a></div>
+            <div>جميع الحقوق محفوظة © 2026 Novi Community</div>
+        </footer>
+    </div>
+
+    <!-- نافذة التقديم -->
+    <div class="modal-overlay" id="apply-modal">
+        <div class="modal-box">
+            <div class="modal-title"><i class="fa-solid fa-user-plus" style="color: #5865F2;"></i> تقديم على طاقم الإدارة</div>
+            <form id="apply-form" onsubmit="submitApplication(event)">
+                <div class="form-group"><label>الاسم</label><input type="text" id="fullName" required placeholder="مثال: محمد "></div>
+                <div class="form-group"><label>العمر</label><input type="number" id="age" required placeholder="مثال: 21"></div>
+                <div class="form-group"><label>خبرتك السابقة في الإدارة</label><textarea id="experience" rows="2" required placeholder="اذكر السيرفرات أو المناصب اللي مسكتها من قبل..."></textarea></div>
+                <div class="form-group"><label>لماذا تود الانضمام إلينا؟</label><textarea id="reason" rows="2" required placeholder="اكتب نبذة بسيطة عن سبب رغبتك بالانضمام..."></textarea></div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-apply-btn">إرسال الطلب</button>
+                    <button type="button" class="close-modal-btn" onclick="toggleModal(false)">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="copy-toast" class="toast"><i class="fa-solid fa-circle-check"></i> <span id="toast-text">تم بنجاح!</span></div>
+
+    <script>
+        document.addEventListener('mousemove', e => {
+            for (const card of document.querySelectorAll('.spotlight-card')) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('user_id');
+        const username = urlParams.get('username');
+        const avatar = urlParams.get('avatar');
+
+        if (userId && username) {
+            localStorage.setItem('discord_user', JSON.stringify({ userId, username, avatar }));
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        const currentUser = JSON.parse(localStorage.getItem('discord_user'));
+        const authContainer = document.getElementById('auth-container');
+
+        if (!currentUser) {
+            window.location.href = 'login.html';
+        } else {
+            const avatarUrl = currentUser.avatar ? `https://cdn.discordapp.com/avatars/${currentUser.userId}/${currentUser.avatar}.png` : 'https://cdn.discordapp.com/embed/avatars/0.png';
+            authContainer.innerHTML = `
+                <div class="user-profile-btn" onclick="logout()" title="تسجيل الخروج" style="cursor: pointer;">
+                    <img src="${avatarUrl}" alt="Avatar">
+                    <span>${currentUser.username}</span>
+                    <i class="fa-solid fa-right-from-bracket" style="margin-right: 5px; color: #ff4757;"></i>
+                </div>
+            `;
+        }
+
+        function logout() {
+            localStorage.removeItem('discord_user');
+            window.location.href = 'login.html';
+        }
+
+        async function checkApplicationStatus() {
+            if (!currentUser) return 'none';
+            try {
+                const res = await fetch(`http://localhost:3000/api/apply/status/${currentUser.userId}`);
+                const data = await res.json();
+                return data.status;
+            } catch (e) { return 'none'; }
+        }
+
+        async function handleApplyClick() {
+            const status = await checkApplicationStatus();
+            if (status === 'pending') { showToast('⏳ طلبك قيد الانتظار حالياً، بانتظار مراجعة الإدارة.'); return; }
+            if (status === 'approved') { showToast('✅ تمت الموافقة على طلبك مسبقاً! مبروك الانضمام.'); return; }
+            if (status === 'rejected') { showToast('❌ عذراً، تم رفض طلبك السابق من قِبل الإدارة.'); return; }
+            toggleModal(true);
+        }
+
+        function toggleModal(show) {
+            document.getElementById('apply-modal').classList.toggle('active', show);
+        }
+
+        async function submitApplication(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('fullName').value;
+            const age = document.getElementById('age').value;
+            const experience = document.getElementById('experience').value;
+            const reason = document.getElementById('reason').value;
+
+            try {
+                const res = await fetch('http://localhost:3000/api/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUser.userId, username: currentUser.username, fullName, age, experience, reason })
+                });
+
+                if (res.ok) {
+                    toggleModal(false);
+                    showToast('✅ تم إرسال طلبك بنجاح! سيتم إشعارك عبر رسالة خاصة في ديسكورد.');
+                    loadStaff();
+                } else { alert('تعذر إرسال الطلب.'); }
+            } catch (err) { alert('خطأ في الاتصال بالسيرفر.'); }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('copy-toast');
+            document.getElementById('toast-text').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark'); html.classList.add('light'); icon.className = 'fa-solid fa-sun';
+                localStorage.setItem('novi_theme', 'light');
+            } else {
+                html.classList.remove('light'); html.classList.add('dark'); icon.className = 'fa-solid fa-moon';
+                localStorage.setItem('novi_theme', 'dark');
+            }
+        }
+        if (localStorage.getItem('novi_theme') === 'light') { toggleTheme(); }
+
+        function renderStats(data) {
+            document.getElementById('total-members').innerText = data.total.toLocaleString();
+            document.getElementById('online-members').innerText = data.online.toLocaleString();
+            document.getElementById('offline-members').innerText = data.offline.toLocaleString();
+            document.getElementById('bots-count').innerText = data.bots.toLocaleString();
+        }
+
+        const savedStats = localStorage.getItem('novi_stats');
+        if (savedStats) renderStats(JSON.parse(savedStats));
+
+        async function updateStats() {
+            try {
+                const response = await fetch('http://localhost:3000/api/stats');
+                if (!response.ok) return;
+                const data = await response.json();
+                renderStats(data);
+                localStorage.setItem('novi_stats', JSON.stringify(data));
+            } catch (error) {}
+        }
+
+        async function loadStaff() {
+            try {
+                const response = await fetch('http://localhost:3000/api/staff');
+                if (!response.ok) return;
+                const staffList = await response.json();
+
+                const container = document.getElementById('staff-container');
+                container.innerHTML = '';
+
+                staffList.forEach(staff => {
+                    const spotlightWrapper = document.createElement('div');
+                    spotlightWrapper.className = 'spotlight-card';
+
+                    let badgesHtml = '';
+                    if (staff.badges && staff.badges.length > 0) {
+                        badgesHtml = `<div class="badges-container">`;
+                        staff.badges.forEach(b => badgesHtml += `<div class="top-badge">${b}</div>`);
+                        badgesHtml += `</div>`;
+                    }
+
+                    spotlightWrapper.innerHTML = `
+                        <div class="staff-card">
+                            ${badgesHtml}
+                            <img src="${staff.avatar}" alt="${staff.name}" class="staff-avatar">
+                            <div class="staff-name">${staff.name}</div>
+                            <div class="staff-username">@${staff.username}</div>
+                            <div class="staff-role">${staff.role}</div>
+                        </div>
+                    `;
+                    container.appendChild(spotlightWrapper);
+                });
+
+                const status = await checkApplicationStatus();
+                let cardText = 'انضم إلى فريق العمل', cardSub = 'كن جزءاً من طاقم الإدارة', cardBadge = 'قدم الآن <i class="fa-solid fa-arrow-left" style="margin-right: 5px; font-size: 0.75rem;"></i>', badgeColor = 'rgba(46, 204, 113, 0.15); color: #2ecc71; border-color: rgba(46, 204, 113, 0.3)';
+
+                if (status === 'pending') { cardText = 'حالة الطلب'; cardSub = '⏳ قيد الانتظار...'; cardBadge = 'بانتظار المراجعة'; badgeColor = 'rgba(241, 196, 15, 0.15); color: #f1c40f; border-color: rgba(241, 196, 15, 0.3)'; }
+                else if (status === 'approved') { cardText = 'حالة الطلب'; cardSub = '🎉 تمت الموافقة!'; cardBadge = 'مقبول رسمياً'; badgeColor = 'rgba(46, 204, 113, 0.15); color: #2ecc71; border-color: rgba(46, 204, 113, 0.3)'; }
+                else if (status === 'rejected') { cardText = 'حالة الطلب'; cardSub = '❌ تم الرفض'; cardBadge = 'عذراً، لم يتم قبولك'; badgeColor = 'rgba(231, 76, 60, 0.15); color: #e74c3c; border-color: rgba(231, 76, 60, 0.3)'; }
+
+                const applyCardWrapper = document.createElement('div');
+                applyCardWrapper.className = 'spotlight-card';
+                applyCardWrapper.style.cursor = 'pointer';
+                applyCardWrapper.onclick = handleApplyClick;
+
+                applyCardWrapper.innerHTML = `
+                    <div class="staff-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 215px;">
+                        <div class="staff-avatar" style="display: flex; align-items: center; justify-content: center; background: rgba(88, 101, 242, 0.15); border: 3px dashed #5865F2; color: #7289da; font-size: 1.8rem;">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <div class="staff-name" style="margin-top: 5px;">${cardText}</div>
+                        <div class="staff-username" style="margin-bottom: 12px;">${cardSub}</div>
+                        <div class="staff-role" style="background: ${badgeColor}">${cardBadge}</div>
+                    </div>
+                `;
+                container.appendChild(applyCardWrapper);
+
+            } catch (err) {}
+        }
+
+        function copyInvite() {
+            const inviteLink = 'https://discord.gg/nvi';
+            navigator.clipboard.writeText(inviteLink).then(() => {
+                showToast('تم نسخ رابط دعوة السيرفر بنجاح!');
+            });
+        }
+
+        updateStats();
+        loadStaff();
+        setInterval(updateStats, 3000);
+        setInterval(loadStaff, 5000);
+    </script>
+</body>
+</html>
